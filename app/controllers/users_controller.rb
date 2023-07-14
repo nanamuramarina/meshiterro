@@ -8,6 +8,8 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
+    @user = User.all
+    @post_images = @user.post_images
   end
 
   # GET /users/new
@@ -17,6 +19,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    @user = User[:i]
   end
 
   # POST /users or /users.json
@@ -62,7 +65,14 @@ class UsersController < ApplicationController
     def set_user
       @user = User.find(params[:id])
     end
+    
+    def update
+      @user =User.find(params[:id])
+      @user.update(item_params)
+      redirect_to
+    end
 
+    private
     # Only allow a list of trusted parameters through.
     def user_params
       params.require(:user).permit(:name, :portrait)
