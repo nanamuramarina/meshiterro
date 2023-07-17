@@ -19,7 +19,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    @user = User[:i]
+    @user = User.find(params[:id])
   end
 
   # POST /users or /users.json
@@ -69,12 +69,12 @@ class UsersController < ApplicationController
     def update
       @user =User.find(params[:id])
       @user.update(item_params)
-      redirect_to
+      redirect_to user_path(user.id)
     end
 
     private
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :portrait)
+      params.require(:user).permit(:name, :orifile_image)
     end
 end
