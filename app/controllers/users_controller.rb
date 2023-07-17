@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :is_matching_login_user, only: [:edit, :update]
   before_action :set_user, only: %i[ show edit update destroy ]
 
   # GET /users or /users.json
@@ -8,8 +9,8 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
-    @user = User.all
-    @post_images = @user.post_images
+    @user = User.find(params[:id])
+    @post_images = @user.post_images.page(params[:id])
   end
 
   # GET /users/new
@@ -19,6 +20,10 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    user = User.find(params[:id])
+    unless user.id == current_user.id
+      redirect_to post_images_path
+    end
     @user = User.find(params[:id])
   end
 
@@ -60,21 +65,33 @@ class UsersController < ApplicationController
     end
   end
 
+   def update
+     user = User.find(params[:id])
+     unless user.id == current_user.id
+       redirect_to post_images_path
+     end
+     @user =User.find(params[:id])
+     @user.update(user_params)
+     redirect_to user_path(@user.id)
+   end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
     end
-    
-    def update
-      @user =User.find(params[:id])
-      @user.update(item_params)
-      redirect_to user_path(user.id)
-    end
+
+
 
     private
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :orifile_image)
+      params.require(:user).permit(:name, :profile_image)
+    end
+    def is_mathing_login_user
+      user = User.find(params[:id])
+      unless user.id == current_user.id
+        redirect_to post_images_path
+      end
     end
 end
